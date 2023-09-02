@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class SetupPanel extends JPanel {
 
-    private JLabel executionTime;
+    private JLabel executionTime, nThreadsUsed;
     private JTextField inputWidth, inputHeight, inputRndPoints;
     private JButton showGuiButton, startSimulationButton, newSetupButton;
     private Controller controller;
@@ -24,15 +24,18 @@ public class SetupPanel extends JPanel {
         setLayout(layout);
 
 
-        JLabel titleLabel = new JLabel("SEQUENTIAL Simulator");
+        JLabel titleLabel = new JLabel("MultiThreaded Simulator");
         JLabel widthLabel = new JLabel("Input width:");
         JLabel heightLabel = new JLabel("Input height:");
         JLabel pointsLabel = new JLabel("Input points:");
         executionTime = new JLabel("Execution time: ");
 
-        inputWidth = new JTextField(15);
-        inputHeight = new JTextField(15);
-        inputRndPoints = new JTextField(15);
+        int availableThreads = Runtime.getRuntime().availableProcessors()-1;
+        nThreadsUsed = new JLabel("Threads: " + availableThreads);
+
+        inputWidth = new JTextField(10);
+        inputHeight = new JTextField(10);
+        inputRndPoints = new JTextField(10);
 
         TextFieldChangeListener listener = new TextFieldChangeListener();
         inputWidth.getDocument().addDocumentListener(listener);
@@ -67,6 +70,7 @@ public class SetupPanel extends JPanel {
         add(showGuiButton);
         add(startSimulationButton);
         add(executionTime);
+        add(nThreadsUsed);
 
         layout.putConstraint(SpringLayout.NORTH, titleLabel, 10, SpringLayout.NORTH, this);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, titleLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
@@ -98,7 +102,10 @@ public class SetupPanel extends JPanel {
         layout.putConstraint(SpringLayout.NORTH, startSimulationButton, 10, SpringLayout.SOUTH, showGuiButton);
         layout.putConstraint(SpringLayout.WEST, startSimulationButton, 0, SpringLayout.WEST, showGuiButton);
 
-        layout.putConstraint(SpringLayout.NORTH, executionTime, 10, SpringLayout.SOUTH, startSimulationButton);
+        layout.putConstraint(SpringLayout.NORTH, nThreadsUsed, 10, SpringLayout.SOUTH, startSimulationButton);
+        layout.putConstraint(SpringLayout.WEST, nThreadsUsed, 10, SpringLayout.WEST, this);
+
+        layout.putConstraint(SpringLayout.NORTH, executionTime, 10, SpringLayout.SOUTH, nThreadsUsed);
         layout.putConstraint(SpringLayout.WEST, executionTime, 10, SpringLayout.WEST, this);
     }
 
@@ -127,7 +134,7 @@ public class SetupPanel extends JPanel {
         public void removeUpdate(DocumentEvent e) {
             if (e.getDocument() == inputWidth.getDocument()) {
                 String text = inputWidth.getText();
-                if (text.length()==0){
+                if (text.isEmpty()){
                     controller.setWIDTH(0);
                 }else{
                     controller.setWIDTH(Integer.parseInt(text));
@@ -136,7 +143,7 @@ public class SetupPanel extends JPanel {
 
             } else if (e.getDocument() == inputHeight.getDocument()) {
                 String text = inputHeight.getText();
-                if (text.length()==0){
+                if (text.isEmpty()){
                     controller.setHEIGHT(0);
                 }else{
                     controller.setHEIGHT(Integer.parseInt(text));
@@ -145,7 +152,7 @@ public class SetupPanel extends JPanel {
 
             } else if (e.getDocument() == inputRndPoints.getDocument()) {
                 String text = inputRndPoints.getText();
-                if (text.length()==0){
+                if (text.isEmpty()){
                     controller.setRND_POINTS(0);
                 }else{
                     controller.setRND_POINTS(Integer.parseInt(text));
@@ -197,7 +204,7 @@ public class SetupPanel extends JPanel {
                 }else{
                     showGuiButton.setText("Hide chart");
                     parent.showHideMap();
-                    controller.generateData();
+                    controller.generateChart();
                     controller.setChartVisible(!controller.isChartVisible());
                 }
             }else if (btn==(startSimulationButton)) {

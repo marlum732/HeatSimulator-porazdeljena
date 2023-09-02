@@ -14,7 +14,7 @@ public class ContentPanel extends JPanel {
         this.controller=controller;
         this.setLayout(new BorderLayout());
 
-        setupPanel = new SetupPanel(300, 500, controller);
+        setupPanel = new SetupPanel(200, 600, controller);
         this.add(setupPanel, BorderLayout.CENTER);
 
         chart = new Chart(controller);

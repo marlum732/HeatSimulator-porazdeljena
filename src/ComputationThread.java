@@ -1,38 +1,43 @@
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Phaser;
+
 public class ComputationThread extends Thread {
 
+    private final Controller controller;
+    private final double CONDITION = 0.0025;
     private int WIDTH;
     private int HEIGHT;
     private double[][] temperature;
-    private final Controller controller;
-    private boolean isRunning = false;
-    private double CONDITION = 0.0025;
+    private final int start;
+    private final int end;
+    private Phaser phaser;
 
 
-    public ComputationThread(Controller controller) {
-        this.controller=controller;
-        this.temperature = controller.getTemperature();
+    public ComputationThread(int start, int end, double[][] temperature, Phaser phaser, Controller controller) {
+        this.controller = controller;
         this.WIDTH = temperature.length;
         this.HEIGHT = temperature[0].length;
+        this.temperature = temperature;
+        this.start = start;
+        this.end = end;
+        this.phaser = phaser;
     }
 
 
     @Override
     public void run() {
-        while (!isRunning){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        boolean stable = false;
+        System.out.println("Thread started: " + Thread.currentThread().getId());
 
-        long start = System.currentTimeMillis();
-        while (!stable) {
-            stable = true;
+        int iterationCount = 0;
+        boolean localStable = false;
 
-            for (int i = 0; i < WIDTH; i++) {
-                for (int j = 0; j < HEIGHT; j++) {
+        while (!localStable) {
+            iterationCount++;
+            localStable = true;
+
+            for (int i = start; i < end; i++) {
+                for (int j = 0; j < WIDTH; j++) {
                     if (temperature[i][j] == 1) continue;
 
                     double value = 0;
@@ -44,30 +49,16 @@ public class ComputationThread extends Thread {
 
                     double diff = Math.abs(value - temperature[i][j]);
                     if (diff > CONDITION) {
-                        stable = false;
+                        localStable = false;
                     }
                     temperature[i][j] = value;
                 }
             }
-            if (!stable && controller.isChartVisible()) {
-                controller.repaintChart();
-            }
+
+            if (start == 0) controller.repaintChart();
+            phaser.arriveAndAwaitAdvance();
         }
-        long end = System.currentTimeMillis();
-
-        controller.updateExecutionTime((end-start) + "ms");
-        System.out.println("Execution time: " + (end - start) + " ms");
-    }
-
-
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    public void setRunning(boolean running) {
-        temperature = controller.getTemperature();
-        WIDTH = temperature.length;
-        HEIGHT = temperature[0].length;
-        isRunning = running;
+        phaser.arriveAndDeregister();
+        System.out.println("Thread finished: " + Thread.currentThread().getId() + " Iteration count: " + iterationCount);
     }
 }
