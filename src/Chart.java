@@ -39,6 +39,7 @@ public class Chart extends JComponent {
         for (int i = 0; i < temperature.length; i++) {
             for (int j = 0; j < temperature[0].length; j++) {
                 double temp = temperature[i][j];
+                //hue to rgb made with the help of ChatGPT-An AI language model developed by OpenAI
                 float hue = (float) (0.66 * (1 - (temp - min) / (max - min)));
                 int rgb = Color.HSBtoRGB(hue, 1.0f, 1.0f);
                 rgbArray[i + j * temperature.length] = rgb;

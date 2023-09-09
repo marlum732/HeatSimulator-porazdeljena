@@ -27,7 +27,7 @@ public class ComputationThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Thread started: " + Thread.currentThread().getId());
+        //System.out.println("Thread started: " + Thread.currentThread().getId());
 
         int iterationCount = 0;
         boolean localStable = false;
@@ -59,6 +59,6 @@ public class ComputationThread extends Thread {
             phaser.arriveAndAwaitAdvance();
         }
         phaser.arriveAndDeregister();
-        System.out.println("Thread finished: " + Thread.currentThread().getId() + " Iteration count: " + iterationCount);
+        //System.out.println("Thread finished: " + Thread.currentThread().getId() + " Iteration count: " + iterationCount);
     }
 }

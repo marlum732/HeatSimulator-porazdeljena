@@ -6,7 +6,7 @@ public class Controller {
     private int WIDTH = 200;
     private int HEIGHT = 200;
     private int RND_POINTS = 200;
-    private int SEED = 555;
+    private int SEED = 777;
     private boolean chartVisible = true;
     private boolean alreadySimulated = false;
 

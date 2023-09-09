@@ -167,6 +167,7 @@ public class SetupPanel extends JPanel {
         }
     }
 
+    //regex made with the help of ChatGPT-An AI language model developed by OpenAI
     private class NumberDocumentFilter extends DocumentFilter {
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
